@@ -123,16 +123,13 @@ set(LUAJIT_ALL_LIB
     ${LUAJIT_ROOT}/src/lib_bit.c
     ${LUAJIT_ROOT}/src/lib_string.c
     ${LUAJIT_ROOT}/src/lib_table.c
-    #${LUAJIT_ROOT}/src/lib_io.c
-    #${LUAJIT_ROOT}/src/lib_os.c
+    ${LUAJIT_ROOT}/src/lib_io.c
+    ${LUAJIT_ROOT}/src/lib_os.c
     ${LUAJIT_ROOT}/src/lib_package.c
     ${LUAJIT_ROOT}/src/lib_debug.c
     ${LUAJIT_ROOT}/src/lib_jit.c
     ${LUAJIT_ROOT}/src/lib_ffi.c
     ${LUAJIT_ROOT}/src/lib_buffer.c
-    # custom
-    ${CMAKE_CURRENT_LIST_DIR}/patch/lib_io.c
-    ${CMAKE_CURRENT_LIST_DIR}/patch/lib_os.c
 )
 
 add_custom_command(
@@ -266,19 +263,17 @@ set(LUAJIT_LIB_SRC
     ${LUAJIT_ROOT}/src/lib_debug.c
     ${LUAJIT_ROOT}/src/lib_ffi.c
     ${LUAJIT_ROOT}/src/lib_init.c
-    #${LUAJIT_ROOT}/src/lib_io.c
+    ${LUAJIT_ROOT}/src/lib_io.c
     ${LUAJIT_ROOT}/src/lib_jit.c
     ${LUAJIT_ROOT}/src/lib_math.c
-    #${LUAJIT_ROOT}/src/lib_os.c
+    ${LUAJIT_ROOT}/src/lib_os.c
     ${LUAJIT_ROOT}/src/lib_package.c
     ${LUAJIT_ROOT}/src/lib_string.c
     ${LUAJIT_ROOT}/src/lib_table.c
-    # custom
-    patch/lib_io.c
-    patch/lib_os.c
-    patch/lib_utf8.c
-    patch/lib_strpack.c
-    patch/lj_win32.c
+    # patch
+    ${LUAJIT_ROOT}/src/lib_utf8.c
+    ${LUAJIT_ROOT}/src/lib_strpack.c
+    ${LUAJIT_ROOT}/src/lj_win32.c
 )
 
 add_library(lua51_static STATIC)

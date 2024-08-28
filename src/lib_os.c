@@ -33,6 +33,10 @@
 #include <locale.h>
 #endif
 
+#ifdef _WIN32
+#include "lj_win32.h"
+#endif
+
 /* ------------------------------------------------------------------------ */
 
 #define LJLIB_MODULE_os
@@ -49,7 +53,11 @@ LJLIB_CF(os_execute)
 #endif
 #else
   const char *cmd = luaL_optstring(L, 1, NULL);
+#ifdef _WIN32
+  int stat = _u8system(cmd);
+#else
   int stat = system(cmd);
+#endif
 #if LJ_52
   if (cmd)
     return luaL_execresult(L, stat);
@@ -64,14 +72,22 @@ LJLIB_CF(os_execute)
 LJLIB_CF(os_remove)
 {
   const char *filename = luaL_checkstring(L, 1);
+#ifdef _WIN32
+  return luaL_fileresult(L, _u8remove(filename) == 0, filename);
+#else
   return luaL_fileresult(L, remove(filename) == 0, filename);
+#endif
 }
 
 LJLIB_CF(os_rename)
 {
   const char *fromname = luaL_checkstring(L, 1);
   const char *toname = luaL_checkstring(L, 2);
+#ifdef _WIN32
+  return luaL_fileresult(L, _u8rename(fromname, toname) == 0, fromname);
+#else
   return luaL_fileresult(L, rename(fromname, toname) == 0, fromname);
+#endif
 }
 
 LJLIB_CF(os_tmpname)
@@ -90,11 +106,19 @@ LJLIB_CF(os_tmpname)
   else
     lj_err_caller(L, LJ_ERR_OSUNIQF);
 #else
+#ifdef _WIN32
+  char* buf = _u8tmpnam(NULL);
+  if (buf == NULL)
+#else
   char buf[L_tmpnam];
   if (tmpnam(buf) == NULL)
+#endif
     lj_err_caller(L, LJ_ERR_OSUNIQF);
 #endif
   lua_pushstring(L, buf);
+#ifdef _WIN32
+  _u8gclear();
+#endif
   return 1;
 #endif
 }
@@ -104,7 +128,12 @@ LJLIB_CF(os_getenv)
 #if LJ_TARGET_CONSOLE
   lua_pushnil(L);
 #else
+#ifdef _WIN32
+  lua_pushstring(L, _u8getenv(luaL_checkstring(L, 1)));
+  _u8gclear();
+#else
   lua_pushstring(L, getenv(luaL_checkstring(L, 1)));  /* if NULL push nil */
+#endif
 #endif
   return 1;
 }

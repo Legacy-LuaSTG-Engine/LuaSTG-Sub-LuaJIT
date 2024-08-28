@@ -305,6 +305,7 @@ static LexToken lex_scan(LexState *ls, TValue *tv)
       s = lj_parse_keepstr(ls, ls->sb.b, sbuflen(&ls->sb));
       setstrV(ls->L, tv, s);
       if (s->reserved > 0)  /* Reserved word? */
+        if ((TK_OFS + s->reserved) != TK_goto) /* disable goto */
 	return TK_OFS + s->reserved;
       return TK_name;
     }
@@ -360,9 +361,10 @@ static LexToken lex_scan(LexState *ls, TValue *tv)
     case '~':
       lex_next(ls);
       if (ls->c != '=') return '~'; else { lex_next(ls); return TK_ne; }
-    case ':':
+    /* disable goto */
+    /*case ':':
       lex_next(ls);
-      if (ls->c != ':') return ':'; else { lex_next(ls); return TK_label; }
+      if (ls->c != ':') return ':'; else { lex_next(ls); return TK_label; }*/
     case '"':
     case '\'':
       lex_string(ls, tv);

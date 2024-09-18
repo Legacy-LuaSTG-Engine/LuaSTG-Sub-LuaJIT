@@ -154,11 +154,29 @@ static int codepoint (lua_State *L) {
   return n;
 }
 
+#define u8u(x, n) (0x80 | ((x >> n) & 0x3f))
 
 static void pushutfchar (lua_State *L, int arg) {
   lua_Integer code = (lua_Integer)luaL_checkinteger(L, arg);
-  luaL_argcheck(L, code <= MAXUTF, arg, "value out of range");
-  lua_pushfstring(L, "%U", (long)code);
+  luaL_argcheck(L, code >= 0 && code <= MAXUTF, arg, "value out of range");
+  /* luajit lua_pushfstring not support format %U */
+  /*lua_pushfstring(L, "%U", (long)code);*/
+  if (code <= 0x7f) {
+    char buf[2] = { code & 0x7f, '\0' };
+    lua_pushlstring(L, buf, 1);
+  }
+  else if (code <= 0x7ff) {
+    char buf[3] = { 0xc0 | ((code >> 6) & 0x1f), u8u(code, 0), '\0' };
+    lua_pushlstring(L, buf, 2);
+  }
+  else if (code <= 0xffff) {
+    char buf[4] = { 0xe0 | ((code >> 12) & 0x0f), u8u(code, 6), u8u(code, 0), '\0' };
+    lua_pushlstring(L, buf, 3);
+  }
+  else if (code <= 0x10ff) {
+    char buf[5] = { 0xf0 | ((code >> 18) & 0x07), u8u(code, 12), u8u(code, 6), u8u(code, 0), '\0' };
+    lua_pushlstring(L, buf, 4);
+  }
 }
 
 

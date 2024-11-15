@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.26)
 project(LuaJIT)
 
+# options
+
+option(LUAJIT_ENABLE_MORE_WARNING "LuaJIT: enable more warning" OFF)
+
 # common
 
 set(LUAJIT_ROOT ${CMAKE_CURRENT_LIST_DIR})
@@ -17,14 +21,16 @@ function(luajit_target_setup target)
     )
     target_compile_options(${target}
     PRIVATE
-        "/W4"
-        "/wd4127" # conditional expression is constant
-        "/wd4702" # unreachable code
-        "/wd4706" # assignment within conditional expression (note: update value in while/for loop)
         "/sdl"
         "/permissive-"
         "/D_CRT_STDIO_INLINE=__declspec(dllexport)__inline"
     )
+    if (LUAJIT_ENABLE_MORE_WARNING)
+        target_compile_options(${target}
+        PRIVATE
+            "/W4"
+        )
+    endif ()
     if (CMAKE_SIZEOF_VOID_P EQUAL 4)
         target_compile_options(${target}
         PRIVATE

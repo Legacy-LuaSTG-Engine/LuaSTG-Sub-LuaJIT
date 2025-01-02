@@ -7,6 +7,7 @@
 #define lstrlib_c
 #define LUA_LIB
 
+#include <limits.h>
 #include <string.h>
 
 #include "lua.h"

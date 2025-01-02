@@ -5,6 +5,46 @@ project(LuaJIT)
 
 option(LUAJIT_ENABLE_MORE_WARNING "LuaJIT: enable more warning" OFF)
 
+# architecture
+
+if (NOT (DEFINED LUAJIT_ARCH))
+    try_compile(LUAJIT_IS_X86
+        ${CMAKE_CURRENT_BINARY_DIR}/is_x86
+        SOURCES ${CMAKE_CURRENT_LIST_DIR}/cmake/is_x86.c
+        C_STANDARD 17
+        C_STANDARD_REQUIRED ON
+        C_EXTENSIONS OFF
+    )
+    try_compile(LUAJIT_IS_AMD64
+        ${CMAKE_CURRENT_BINARY_DIR}/is_amd64
+        SOURCES ${CMAKE_CURRENT_LIST_DIR}/cmake/is_amd64.c
+        C_STANDARD 17
+        C_STANDARD_REQUIRED ON
+        C_EXTENSIONS OFF
+    )
+    try_compile(LUAJIT_IS_ARM64
+        ${CMAKE_CURRENT_BINARY_DIR}/is_arm64
+        SOURCES ${CMAKE_CURRENT_LIST_DIR}/cmake/is_arm64.c
+        C_STANDARD 17
+        C_STANDARD_REQUIRED ON
+        C_EXTENSIONS OFF
+    )
+    if (LUAJIT_IS_X86 AND (NOT LUAJIT_IS_AMD64) AND (NOT LUAJIT_IS_ARM64))
+        set(LUAJIT_ARCH "x86" CACHE STRING "LuaJIT: current architecture" FORCE)
+    elseif ((NOT LUAJIT_IS_X86) AND LUAJIT_IS_AMD64 AND (NOT LUAJIT_IS_ARM64))
+        set(LUAJIT_ARCH "amd64" CACHE STRING "LuaJIT: current architecture" FORCE)
+    elseif ((NOT LUAJIT_IS_X86) AND (NOT LUAJIT_IS_AMD64) AND LUAJIT_IS_ARM64)
+        set(LUAJIT_ARCH "arm64" CACHE STRING "LuaJIT: current architecture" FORCE)
+    else ()
+        message(FATAL_ERROR "LuaJIT: what's your architecture?")
+    endif ()
+    message(STATUS "LuaJIT: architecture test result")
+    message(STATUS "-- x86  : ${LUAJIT_IS_X86}")
+    message(STATUS "-- amd64: ${LUAJIT_IS_AMD64}")
+    message(STATUS "-- arm64: ${LUAJIT_IS_ARM64}")
+endif ()
+message(STATUS "LuaJIT: current architecture is ${LUAJIT_ARCH}")
+
 # common
 
 set(LUAJIT_ROOT ${CMAKE_CURRENT_LIST_DIR})
@@ -31,7 +71,7 @@ function(luajit_target_setup target)
             "/W4"
         )
     endif ()
-    if (CMAKE_SIZEOF_VOID_P EQUAL 4)
+    if (LUAJIT_ARCH STREQUAL "x86")
         target_compile_options(${target}
         PRIVATE
             "/arch:SSE2"
@@ -56,20 +96,18 @@ set(LUAJIT_BUILDVM_ARCH_H_DIR ${LUAJIT_TEMP}/host)
 set(LUAJIT_BUILDVM_ARCH_H ${LUAJIT_BUILDVM_ARCH_H_DIR}/buildvm_arch.h)
 set(LUAJIT_DASC)
 
-if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+if (LUAJIT_ARCH STREQUAL "amd64")
     set(LUAJIT_DASM_FLAGS -D WIN -D JIT -D FFI -D ENDIAN_LE -D FPU -D P64)
-    if (CMAKE_GENERATOR_PLATFORM STREQUAL "ARM64")
-        message(STATUS "luajit arm64 (aarch64)")
-        set(LUAJIT_DASC ${LUAJIT_ROOT}/src/vm_arm64.dasc)
-    else()
-        message(STATUS "luajit amd64 (x86_64)")
-        set(LUAJIT_DASC ${LUAJIT_ROOT}/src/vm_x64.dasc)
-    endif()
-else()
+    set(LUAJIT_DASC ${LUAJIT_ROOT}/src/vm_x64.dasc)
+elseif (LUAJIT_ARCH STREQUAL "arm64")
+    set(LUAJIT_DASM_FLAGS -D WIN -D JIT -D FFI -D ENDIAN_LE -D FPU -D P64)
+    set(LUAJIT_DASC ${LUAJIT_ROOT}/src/vm_arm64.dasc)
+elseif (LUAJIT_ARCH STREQUAL "x86")
     set(LUAJIT_DASM_FLAGS -D WIN -D JIT -D FFI -D ENDIAN_LE -D FPU)
-    message(STATUS "luajit x86")
     set(LUAJIT_DASC ${LUAJIT_ROOT}/src/vm_x86.dasc)
-endif()
+else ()
+    message(FATAL_ERROR "LuaJIT: what's your architecture?")
+endif ()   
 
 add_custom_command(
     OUTPUT ${LUAJIT_BUILDVM_ARCH_H}

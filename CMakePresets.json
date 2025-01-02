@@ -1,0 +1,157 @@
+{
+  "version": 6,
+  "configurePresets": [
+    {
+      "name": "vs2022-msvc",
+      "hidden": true,
+      "generator": "Visual Studio 17 2022"
+    },
+    {
+      "name": "vs2022-msvc-x86",
+      "inherits": [
+        "vs2022-msvc"
+      ],
+      "architecture": "Win32",
+      "binaryDir": "${sourceDir}/build/x86"
+    },
+    {
+      "name": "vs2022-msvc-amd64",
+      "inherits": [
+        "vs2022-msvc"
+      ],
+      "architecture": "x64",
+      "binaryDir": "${sourceDir}/build/amd64"
+    },
+    {
+      "name": "vs2022-msvc-arm64",
+      "inherits": [
+        "vs2022-msvc"
+      ],
+      "architecture": "ARM64",
+      "binaryDir": "${sourceDir}/build/arm64"
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "debug",
+      "hidden": true,
+      "configuration": "Debug"
+    },
+    {
+      "name": "release",
+      "hidden": true,
+      "configuration": "Release"
+    },
+    {
+      "name": "windows-vs2022-msvc-x86",
+      "hidden": true,
+      "configurePreset": "vs2022-msvc-x86"
+    },
+    {
+      "name": "windows-vs2022-msvc-amd64",
+      "hidden": true,
+      "configurePreset": "vs2022-msvc-amd64"
+    },
+    {
+      "name": "windows-vs2022-msvc-arm64",
+      "hidden": true,
+      "configurePreset": "vs2022-msvc-arm64"
+    },
+    {
+      "name": "target-luajit",
+      "hidden": true,
+      "targets": [
+        "luajit"
+      ]
+    },
+    {
+      "name": "windows-vs2022-msvc-x86-debug",
+      "inherits": [
+        "windows-vs2022-msvc-x86",
+        "debug",
+        "target-luajit"
+      ]
+    },
+    {
+      "name": "windows-vs2022-msvc-x86-release",
+      "inherits": [
+        "windows-vs2022-msvc-x86",
+        "release",
+        "target-luajit"
+      ]
+    },
+    {
+      "name": "windows-vs2022-msvc-amd64-debug",
+      "inherits": [
+        "windows-vs2022-msvc-amd64",
+        "debug",
+        "target-luajit"
+      ]
+    },
+    {
+      "name": "windows-vs2022-msvc-amd64-release",
+      "inherits": [
+        "windows-vs2022-msvc-amd64",
+        "release",
+        "target-luajit"
+      ]
+    },
+    {
+      "name": "windows-vs2022-msvc-arm64-debug",
+      "inherits": [
+        "windows-vs2022-msvc-arm64",
+        "debug",
+        "target-luajit"
+      ]
+    },
+    {
+      "name": "windows-vs2022-msvc-arm64-release",
+      "inherits": [
+        "windows-vs2022-msvc-arm64",
+        "release",
+        "target-luajit"
+      ]
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "windows-vs2022-msvc-x86-release",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "vs2022-msvc-x86"
+        },
+        {
+          "type": "build",
+          "name": "windows-vs2022-msvc-x86-release"
+        }
+      ]
+    },
+    {
+      "name": "windows-vs2022-msvc-amd64-release",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "vs2022-msvc-amd64"
+        },
+        {
+          "type": "build",
+          "name": "windows-vs2022-msvc-amd64-release"
+        }
+      ]
+    },
+    {
+      "name": "windows-vs2022-msvc-arm64-release",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "vs2022-msvc-arm64"
+        },
+        {
+          "type": "build",
+          "name": "windows-vs2022-msvc-arm64-release"
+        }
+      ]
+    }
+  ]
+}

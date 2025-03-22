@@ -369,6 +369,19 @@ PRIVATE
     lua51
 )
 
+# test
+
+add_executable(test_ffi)
+target_compile_features(test_ffi PRIVATE cxx_std_20)
+target_sources(test_ffi
+PRIVATE
+    ${LUAJIT_ROOT}/test/ffi/main.cpp
+)
+target_link_libraries(test_ffi
+PRIVATE
+    lua51
+)
+
 # install
 
 include(GNUInstallDirs)

@@ -1,0 +1,7 @@
+{
+    "runtime.version": "LuaJIT",
+    "workspace.ignoreDir": [
+        "dynasm",
+        "src"
+    ]
+}

@@ -61,10 +61,15 @@ function(luajit_target_setup target)
     )
     target_compile_options(${target}
     PRIVATE
-        "/sdl"
         "/permissive-"
         "/D_CRT_STDIO_INLINE=__declspec(dllexport)__inline"
     )
+    if ((LUAJIT_ARCH STREQUAL "x86") OR (LUAJIT_ARCH STREQUAL "amd64"))
+        target_compile_options(${target}
+        PRIVATE
+            "/sdl"
+        )
+    endif ()
     if (LUAJIT_ENABLE_MORE_WARNING)
         target_compile_options(${target}
         PRIVATE

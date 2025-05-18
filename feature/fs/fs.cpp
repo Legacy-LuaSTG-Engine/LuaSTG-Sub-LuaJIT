@@ -273,6 +273,12 @@ namespace {
             return 1;
         }
 
+        static int close(lua_State* const vm) {
+            auto const self = as(vm, 1);
+            self->current = self->end;
+            return 0;
+        }
+
         static directory_iterator* as(lua_State* const vm, int const idx) {
             return static_cast<directory_iterator*>(luaL_checkudata(vm, idx, class_name.data()));
         }
@@ -288,10 +294,15 @@ namespace {
             lua::stack_balancer const sb(vm);
             lua::stack const ctx(vm);
 
+            auto const method = ctx.create_map();
+            method.set("next"sv, &meta_call);
+            method.set("close"sv, &close);
+
             auto const metatable = ctx.create_metatable(class_name);
             metatable.set("__gc"sv, &meta_gc);
             metatable.set("__tostring"sv, &meta_to_string);
             metatable.set("__call"sv, &meta_call);
+            metatable.set("__index"sv, method);
         }
     };
 

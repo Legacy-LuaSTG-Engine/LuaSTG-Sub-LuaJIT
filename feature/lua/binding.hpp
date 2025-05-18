@@ -49,6 +49,11 @@ namespace lua {
             lua_pushcfunction(m_state, value);
             lua_settable(m_state, m_index.value());
         }
+        void set(std::string_view const key, map const& value) const noexcept {
+            lua_pushlstring(m_state, key.data(), key.size());
+            lua_pushvalue(m_state, value.m_index.value());
+            lua_settable(m_state, m_index.value());
+        }
 
     private:
         lua_State* m_state{};
@@ -282,6 +287,13 @@ namespace lua {
 
         template<typename T> T top() const noexcept { return at<T>(stack_index(-1)); }
         template<typename T, typename Tag> T top() const noexcept { return at<T, Tag>(stack_index(-1)); }
+
+        // map
+
+        [[nodiscard]] map create_map() const noexcept {
+            lua_newtable(m_state);
+            return map(m_state, stack_index(lua_gettop(m_state)));
+        }
 
         // module
 

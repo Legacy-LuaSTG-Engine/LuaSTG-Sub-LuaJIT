@@ -13,6 +13,10 @@
 #include "lauxlib.h"
 #include "lualib.h"
 
+/* BEGIN LUASTG */
+#include "fs/fs.h"
+/* END LUASTG */
+
 #include "lj_arch.h"
 
 static const luaL_Reg lj_lib_load[] = {
@@ -27,6 +31,9 @@ static const luaL_Reg lj_lib_load[] = {
   { LUA_DBLIBNAME,	luaopen_debug },
   { LUA_BITLIBNAME,	luaopen_bit },
   { LUA_JITLIBNAME,	luaopen_jit },
+  /* BEGIN LUASTG */
+  { "std.fs", luaopen_std_fs },
+  /* END LUASTG */
   { NULL,		NULL }
 };
 

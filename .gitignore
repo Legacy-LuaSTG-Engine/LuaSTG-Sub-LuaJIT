@@ -10,5 +10,11 @@
 *.swp
 .tags
 
+# IDE
+/.vscode
+/.vs
+/.idea
+
+# Build
 /build*
 /cmake-build*

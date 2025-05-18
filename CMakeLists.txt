@@ -54,6 +54,8 @@ function(luajit_target_setup target)
     set_target_properties(${target} PROPERTIES
         C_STANDARD 17
         C_STANDARD_REQUIRED ON
+        CXX_STANDARD 20
+        CXX_STANDARD_REQUIRED ON
     )
     target_compile_definitions(${target}
     PRIVATE
@@ -323,6 +325,9 @@ set(LUAJIT_LIB_SRC
     ${LUAJIT_ROOT}/src/lib_utf8.c
     ${LUAJIT_ROOT}/src/lib_strpack.c
     ${LUAJIT_ROOT}/src/lj_win32.c
+    # libs
+    ${LUAJIT_ROOT}/feature/fs/fs.h
+    ${LUAJIT_ROOT}/feature/fs/fs.cpp
 )
 
 add_library(lua51_static STATIC)
@@ -330,6 +335,7 @@ luajit_target_setup(lua51_static)
 target_include_directories(lua51_static
 PRIVATE
     ${LUAJIT_BUILDVM_OBJ_DIR}
+    ${LUAJIT_ROOT}/feature
 PUBLIC
     ${LUAJIT_ROOT}/src
     ${LUAJIT_TEMP}
@@ -351,6 +357,7 @@ PUBLIC
 target_include_directories(lua51
 PRIVATE
     ${LUAJIT_BUILDVM_OBJ_DIR}
+    ${LUAJIT_ROOT}/feature
 PUBLIC
     ${LUAJIT_ROOT}/src
     ${LUAJIT_TEMP}

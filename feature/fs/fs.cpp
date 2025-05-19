@@ -429,7 +429,7 @@ extern "C" {
         fs.set("directory_iterator"sv, &create_directory_iterator);
         fs.set("recursive_directory_iterator"sv, &create_recursive_directory_iterator);
         // file & directory
-        fs.set("rename"sv, &write_file);
+        fs.set("rename"sv, &rename);
 
         directory_iterator::register_class(vm);
         recursive_directory_iterator::register_class(vm);

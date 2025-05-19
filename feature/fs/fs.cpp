@@ -311,13 +311,17 @@ namespace {
         auto const path = ctx.at<std::string_view>(1_stack_index);
         auto const self = directory_iterator::create(vm);
         auto const options =  std::filesystem::directory_options::skip_permission_denied;
+        TRY
         std::error_code ec;
-        try {
-             self->current = std::filesystem::directory_iterator(utf8(path), options, ec);
-        }
-        catch (...) {
+        self->current = std::filesystem::directory_iterator(utf8(path), options, ec);
+        if (ec) {
+            ctx.push(std::nullopt);
+            ctx.push(ec.message());
+            ctx.push(ec.value());
+            return 3;
         }
         return 1;
+        CATCH_RETURN(std::nullopt)
     }
 
     struct recursive_directory_iterator {
@@ -388,13 +392,17 @@ namespace {
         auto const path = ctx.at<std::string_view>(1_stack_index);
         auto const self = recursive_directory_iterator::create(vm);
         auto const options =  std::filesystem::directory_options::skip_permission_denied;
+        TRY
         std::error_code ec;
-        try {
-             self->current = std::filesystem::recursive_directory_iterator(utf8(path), options, ec);
-        }
-        catch (...) {
+        self->current = std::filesystem::recursive_directory_iterator(utf8(path), options, ec);
+        if (ec) {
+            ctx.push(std::nullopt);
+            ctx.push(ec.message());
+            ctx.push(ec.value());
+            return 3;
         }
         return 1;
+        CATCH_RETURN(std::nullopt)
     }
 }
 

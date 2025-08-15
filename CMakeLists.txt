@@ -3,7 +3,8 @@ project(LuaJIT)
 
 # options
 
-option(LUAJIT_ENABLE_MORE_WARNING "LuaJIT: enable more warning" OFF)
+option(LUAJIT_ENABLE_MORE_WARNING "LuaJIT: enable more warning"   OFF)
+option(LUAJIT_ENABLE_LUA52COMPAT  "LuaJIT: enable Lua 5.2 compat" OFF)
 
 # architecture
 
@@ -76,6 +77,12 @@ function(luajit_target_setup target)
         target_compile_options(${target}
         PRIVATE
             "/W4"
+        )
+    endif ()
+    if (LUAJIT_ENABLE_LUA52COMPAT)
+        target_compile_definitions(${target}
+        PRIVATE
+            LUAJIT_ENABLE_LUA52COMPAT
         )
     endif ()
     if (LUAJIT_ARCH STREQUAL "x86")

@@ -34,18 +34,6 @@ using lua::operator""_stack_index;
         return 3; \
     }
 
-#define RETURN_VALUE(x, OK_VALUE, ERROR_VALUE) \
-    if ((x)) { \
-        ctx.push((OK_VALUE)); \
-        return 1; \
-    } \
-    else { \
-        ctx.push((ERROR_VALUE)); \
-        ctx.push(ec.message()); \
-        ctx.push(ec.value()); \
-        return 3; \
-    }
-
 #define RETURN_ERROR(ERROR_VALUE, ERROR_MESSAGE, ERROR_CODE) { \
         ctx.push((ERROR_VALUE)); \
         ctx.push((ERROR_MESSAGE)); \
@@ -146,7 +134,13 @@ namespace {
         TRY
         std::error_code ec;
         auto const result = std::filesystem::file_size(utf8(path), ec);
-        RETURN_VALUE(result != static_cast<std::uintmax_t>(-1), result, std::nullopt);
+        if (result != static_cast<std::uintmax_t>(-1)) {
+            if (ctx.push((result))) {
+                return 1;
+            }
+            ec = std::make_error_code(std::errc::value_too_large);
+        }
+        RETURN_ERROR(std::nullopt, ec.message(), ec.value())
         CATCH_RETURN(std::nullopt)
     }
 

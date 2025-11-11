@@ -29,9 +29,9 @@ namespace lua {
 
     static_assert(sizeof(stack_index) == sizeof(int32_t));
 
-    struct store_as_pointer {
-        void* unused{};
-    };
+    //struct store_as_pointer {
+    //    void* unused{};
+    //};
 
     class map {
     public:
@@ -211,16 +211,16 @@ namespace lua {
             lua_pushlightuserdata(m_state, value);
         }
 
-        template<typename Tag> void push(int64_t const value) const noexcept;
-        template<> void push<store_as_pointer>(int64_t const value) const noexcept {
-            static_assert(sizeof(void*) >= sizeof(int64_t));
-            lua_pushlightuserdata(m_state, reinterpret_cast<void*>(value));
-        }
-        template<typename Tag> void push(uint64_t const value) const noexcept;
-        template<> void push<store_as_pointer>(uint64_t const value) const noexcept {
-            static_assert(sizeof(void*) >= sizeof(uint64_t));
-            lua_pushlightuserdata(m_state, reinterpret_cast<void*>(value));
-        }
+        //template<typename Tag> void push(int64_t const value) const noexcept;
+        //template<> void push<store_as_pointer>(int64_t const value) const noexcept {
+        //    static_assert(sizeof(void*) >= sizeof(int64_t));
+        //    lua_pushlightuserdata(m_state, reinterpret_cast<void*>(value));
+        //}
+        //template<typename Tag> void push(uint64_t const value) const noexcept;
+        //template<> void push<store_as_pointer>(uint64_t const value) const noexcept {
+        //    static_assert(sizeof(void*) >= sizeof(uint64_t));
+        //    lua_pushlightuserdata(m_state, reinterpret_cast<void*>(value));
+        //}
 
         // access
 
@@ -271,17 +271,17 @@ namespace lua {
             return lua_touserdata(m_state, index.value());
         }
 
-        template<typename T, typename Tag> T at(stack_index const index) const noexcept;
-        template<> int64_t at<int64_t, store_as_pointer>(stack_index const index) const noexcept {
-            static_assert(sizeof(void*) >= sizeof(int64_t));
-            auto const value = lua_touserdata(m_state, index.value());
-            return reinterpret_cast<int64_t>(value);
-        }
-        template<> uint64_t at<uint64_t, store_as_pointer>(stack_index const index) const noexcept {
-            static_assert(sizeof(void*) >= sizeof(uint64_t));
-            auto const value = lua_touserdata(m_state, index.value());
-            return reinterpret_cast<uint64_t>(value);
-        }
+        //template<typename T, typename Tag> T at(stack_index const index) const noexcept;
+        //template<> int64_t at<int64_t, store_as_pointer>(stack_index const index) const noexcept {
+        //    static_assert(sizeof(void*) >= sizeof(int64_t));
+        //    auto const value = lua_touserdata(m_state, index.value());
+        //    return reinterpret_cast<int64_t>(value);
+        //}
+        //template<> uint64_t at<uint64_t, store_as_pointer>(stack_index const index) const noexcept {
+        //    static_assert(sizeof(void*) >= sizeof(uint64_t));
+        //    auto const value = lua_touserdata(m_state, index.value());
+        //    return reinterpret_cast<uint64_t>(value);
+        //}
 
         // access top
 

@@ -213,12 +213,12 @@ namespace lua {
 
         template<typename Tag> void push(int64_t const value) const noexcept;
         template<> void push<store_as_pointer>(int64_t const value) const noexcept {
-            static_assert(sizeof(size_t) >= sizeof(int64_t));
+            static_assert(sizeof(void*) >= sizeof(int64_t));
             lua_pushlightuserdata(m_state, reinterpret_cast<void*>(value));
         }
         template<typename Tag> void push(uint64_t const value) const noexcept;
         template<> void push<store_as_pointer>(uint64_t const value) const noexcept {
-            static_assert(sizeof(size_t) >= sizeof(uint64_t));
+            static_assert(sizeof(void*) >= sizeof(uint64_t));
             lua_pushlightuserdata(m_state, reinterpret_cast<void*>(value));
         }
 
@@ -273,12 +273,12 @@ namespace lua {
 
         template<typename T, typename Tag> T at(stack_index const index) const noexcept;
         template<> int64_t at<int64_t, store_as_pointer>(stack_index const index) const noexcept {
-            static_assert(sizeof(size_t) >= sizeof(int64_t));
+            static_assert(sizeof(void*) >= sizeof(int64_t));
             auto const value = lua_touserdata(m_state, index.value());
             return reinterpret_cast<int64_t>(value);
         }
         template<> uint64_t at<uint64_t, store_as_pointer>(stack_index const index) const noexcept {
-            static_assert(sizeof(size_t) >= sizeof(uint64_t));
+            static_assert(sizeof(void*) >= sizeof(uint64_t));
             auto const value = lua_touserdata(m_state, index.value());
             return reinterpret_cast<uint64_t>(value);
         }
